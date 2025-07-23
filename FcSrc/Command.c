@@ -57,7 +57,10 @@ static void successReceiveCallBack(void)
 
 void PackageGet(void)
 {
-
+    if (getUnlockState() == Lock) {
+        PackageClear();
+        return;
+    }
     if (CommandPacket.state != Empty) {
         DrvUart3SendBuf((uint8_t *)"B", 1);
         return;

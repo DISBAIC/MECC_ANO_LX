@@ -177,5 +177,12 @@ void LX_FC_State_Task(float dT_s)
 
 LockState getUnlockState(void)
 {
+	if (fc_bat.st_data.voltage_100 > 1200) {
+		return fc_sta.unlock_sta;
+	}
+	else if (fc_bat.st_data.voltage_100 >= 0 && fc_bat.st_data.voltage_100 <= 20) {
+		return Unlock;
+	}
 	return fc_sta.unlock_sta;
+	
 }

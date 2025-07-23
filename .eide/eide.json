@@ -91,12 +91,14 @@
           "DriversMcu/STM32F407/Libraries/CMSIS/ST/STM32F4xx/Include",
           "DriversMcu/STM32F407",
           ".cmsis/include",
-          "ProjectSTM32F407/RTE/_Ano_LX"
+          "ProjectSTM32F407/RTE/_Ano_LX",
+          "../../../Embedded/ST/CubeCLT/GNU-tools-for-STM32/arm-none-eabi/include"
         ],
         "libList": [],
         "defineList": [
           "USE_STDPERIPH_DRIVER",
-          "USE_USB_OTG_FS"
+          "USE_USB_OTG_FS",
+          "S_DEBUG"
         ]
       },
       "builderOptions": {
