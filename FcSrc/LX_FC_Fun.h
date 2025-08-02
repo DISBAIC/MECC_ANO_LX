@@ -17,6 +17,9 @@ u8 FC_Lock(void);
 u8 LX_Change_Mode(u8 new_mode);
 u8 OneKey_Takeoff(u16 height_cm);
 u8 OneKey_Land(void);
+u8 Hover(void);
+
+
 u8 OneKey_Flip(void);
 u8 OneKey_Return_Home(void);
 u8 Horizontal_Calibrate(void);

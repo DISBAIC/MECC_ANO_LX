@@ -97,8 +97,7 @@
         "libList": [],
         "defineList": [
           "USE_STDPERIPH_DRIVER",
-          "USE_USB_OTG_FS",
-          "S_DEBUG"
+          "USE_USB_OTG_FS"
         ]
       },
       "builderOptions": {

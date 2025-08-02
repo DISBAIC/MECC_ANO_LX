@@ -2,11 +2,13 @@
 #include "Drv_Uart.h"
 #include <stdint.h>
 #include "Drv_BSP.h"
+#include "LX_FC_Fun.h"
 #include "LX_FC_State.h"
 
 extern u8 U3RxDataTmp[100];
 extern u8 U3RxInCnt;
 extern u8 U3Cnt;
+extern u8 emergency_hover;
 
 _CommandPacket CommandPacket = {
     .arg1  = 0,
@@ -61,20 +63,25 @@ void PackageGet(void)
         PackageClear();
         return;
     }
+    if (U3RxDataTmp[U3Cnt] == 'H' ) {
+        emergency_hover = 1;
+        PackageClear();
+        return;
+    }
     if (CommandPacket.state != Empty) {
         DrvUart3SendBuf((uint8_t *)"B", 1);
         return;
     }
     for (u8 i = 0; i < U3Cnt; i++) {
         if (U3RxDataTmp[i] == 0x54) {
-            if (i + 5 < U3Cnt && U3RxDataTmp[i + 5] == 0x45) {
+            if (i + 5 < U3Cnt && U3RxDataTmp[i + 6] == 0x45) {
                 if (CommandPacket.state == Doing || CommandPacket.state == Waiting) {
                     DrvUart3SendBuf((uint8_t *)"B", 1);
                     return; // Already have a command packet
                 }
                 CommandPacket.type  = (CommandType)U3RxDataTmp[i + 1];
                 CommandPacket.arg1  = (U3RxDataTmp[i + 2] << 8) | U3RxDataTmp[i + 3];
-                CommandPacket.arg2  = U3RxDataTmp[i + 4];
+                CommandPacket.arg2  = U3RxDataTmp[i + 4]<<8 | U3RxDataTmp[i + 5];
                 CommandPacket.state = Waiting;
                 U3Cnt = 0;
                 successReceiveCallBack();

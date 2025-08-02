@@ -9,7 +9,7 @@ typedef unsigned short u16;
 typedef enum {
     TakeOff = 0,
     Move    = 1,
-    Land    = 2
+    Land    = 2,
 } CommandType;
 
 typedef enum {
@@ -40,7 +40,7 @@ typedef enum {
 typedef struct {
     CommandType type;
     u16 arg1;
-    u8 arg2;
+    u16 arg2;
     TaskState state; // 0: not completed, 1: completed
 } _CommandPacket;
 

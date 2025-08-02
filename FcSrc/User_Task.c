@@ -20,6 +20,9 @@
 static u8 mission_step = 0;
 
 #endif
+static u8 has_takeoff = 0;
+static u8 has_init    = 0;
+u8 emergency_hover = 0;
 
 void UserTask_OneKeyCmd(void)
 {
@@ -28,11 +31,15 @@ void UserTask_OneKeyCmd(void)
     // 一键起飞/降落例程
     //////////////////////////////////////////////////////////////////////
     // 用静态变量记录一键起飞/降落指令已经执行。
-    static u8 has_takeoff = 0;
-    static u8 has_init    = 0;
+    
 
     // 判断有遥控信号才执行
-    if (rc_in.no_signal != 0) {
+    if (rc_in.no_signal == 1) {
+        return;
+    }
+    if (has_takeoff == 1 && has_init == 1 && emergency_hover == 1) {
+        Hover();
+        emergency_hover = 0;
         return;
     }
     if (has_init == 0) {
@@ -72,12 +79,15 @@ void UserTask_OneKeyCmd(void)
                         sprintf(buffer, "Move Command: Distance: %d, Direction: %d", CommandPacket.arg2, CommandPacket.arg1);
                         DebugTransmit(buffer);
 #endif
-                        Horizontal_Move(CommandPacket.arg2, 100, CommandPacket.arg1);
+                        Horizontal_Move(CommandPacket.arg2, 25, CommandPacket.arg1);
                     } else {
                         PackageClear();
                         ErrorCallBack(NotInFlight);
                         return;
                     }
+                    //54 01 00 00 00 6e 45
+                    //54 00 00 00 00 64 45
+                    //54 01 00 00 00 c8 45
                     break;
                 case Land:
                     if (has_takeoff == 1) {
