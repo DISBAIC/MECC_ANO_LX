@@ -21,8 +21,6 @@ static u8 mission_step = 0;
 
 #endif
 static u8 has_takeoff = 0;
-static u8 has_init    = 0;
-u8 emergency_hover = 0;
 
 void UserTask_OneKeyCmd(void)
 {
@@ -37,18 +35,7 @@ void UserTask_OneKeyCmd(void)
     if (rc_in.no_signal == 1) {
         return;
     }
-    if (has_takeoff == 1 && has_init == 1 && emergency_hover == 1) {
-        Hover();
-        emergency_hover = 0;
-        return;
-    }
-    if (has_init == 0) {
-        if (getUnlockState() == Unlock && rc_in.rc_ch.st_data.ch_[ch_10_aux6] > 1800) {
-            has_init = 1;
-            DrvUart3SendBuf((uint8_t *)"I", 1);
-        }
-    }
-    if (getUnlockState() == Unlock && has_init == 1) {
+    if (getUnlockState() == Unlock) {
         if (CommandPacket.state == Doing && IsIdle() == 1) {
             if (Delay2s() != 1) {
                 return;
@@ -79,7 +66,7 @@ void UserTask_OneKeyCmd(void)
                         sprintf(buffer, "Move Command: Distance: %d, Direction: %d", CommandPacket.arg2, CommandPacket.arg1);
                         DebugTransmit(buffer);
 #endif
-                        Horizontal_Move(CommandPacket.arg2, 25, CommandPacket.arg1);
+                        Horizontal_Move(CommandPacket.arg2, 100, CommandPacket.arg1);
                     } else {
                         PackageClear();
                         ErrorCallBack(NotInFlight);
@@ -108,9 +95,8 @@ void UserTask_OneKeyCmd(void)
             CompleteCallBack();
             PackageClear();
         }
-    } else if (getUnlockState() == Lock && rc_in.rc_ch.st_data.ch_[ch_10_aux6] < 1800 && has_init == 1) {
+    } else if (getUnlockState() == Lock) {
         has_takeoff = 0;
-        has_init    = 0;
         PackageClear();
     }
 #endif

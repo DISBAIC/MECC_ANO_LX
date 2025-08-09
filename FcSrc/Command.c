@@ -8,7 +8,6 @@
 extern u8 U3RxDataTmp[100];
 extern u8 U3RxInCnt;
 extern u8 U3Cnt;
-extern u8 emergency_hover;
 
 _CommandPacket CommandPacket = {
     .arg1  = 0,
@@ -60,11 +59,6 @@ static void successReceiveCallBack(void)
 void PackageGet(void)
 {
     if (getUnlockState() == Lock) {
-        PackageClear();
-        return;
-    }
-    if (U3RxDataTmp[U3Cnt] == 'H' ) {
-        emergency_hover = 1;
         PackageClear();
         return;
     }
